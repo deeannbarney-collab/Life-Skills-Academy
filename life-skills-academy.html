@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Skills Academy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .skill-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .skill-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .skill-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 50px auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        .activity-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .activity-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result-box {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .tip-box {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Life Skills Academy</h1>
+            <p>Master essential skills for success in life</p>
+        </header>
+
+        <div class="skills-grid">
+            <div class="skill-card" onclick="openModal('timeManagement')">
+                <div class="emoji">⏰</div>
+                <h2>Time Management</h2>
+                <p>Learn to prioritize tasks and manage your time effectively</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('communication')">
+                <div class="emoji">💬</div>
+                <h2>Communication Skills</h2>
+                <p>Master the art of effective verbal and written communication</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('criticalThinking')">
+                <div class="emoji">🧠</div>
+                <h2>Critical Thinking</h2>
+                <p>Develop analytical skills and logical reasoning</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('cooking')">
+                <div class="emoji">🍳</div>
+                <h2>Cooking Basics</h2>
+                <p>Learn fundamental cooking techniques and recipes</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('digitalLiteracy')">
+                <div class="emoji">💻</div>
+                <h2>Digital Literacy</h2>
+                <p>Navigate the digital world safely and effectively</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('selfCare')">
+                <div class="emoji">🧘</div>
+                <h2>Self-Care</h2>
+                <p>Prioritize your mental and physical wellbeing</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('financial')">
+                <div class="emoji">💰</div>
+                <h2>Financial Literacy</h2>
+                <p>Master budgeting, saving, and money management</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('organization')">
+                <div class="emoji">📋</div>
+                <h2>Organization Skills</h2>
+                <p>Create systems to keep your life organized</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('problemSolving')">
+                <div class="emoji">🔍</div>
+                <h2>Problem Solving</h2>
+                <p>Develop strategies to tackle any challenge</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('conflictResolution')">
+                <div class="emoji">🤝</div>
+                <h2>Conflict Resolution</h2>
+                <p>Navigate disagreements constructively</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('firstAid')">
+                <div class="emoji">🏥</div>
+                <h2>First Aid & Safety</h2>
+                <p>Learn essential emergency response skills</p>
+                <button class="btn">Start Learning</button>
+            </div>
+
+            <div class="skill-card" onclick="openModal('emotional')">
+                <div class="emoji">❤️</div>
+                <h2>Emotional Intelligence</h2>
+                <p>Understand and manage your emotions</p>
+                <button class="btn">Start Learning</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Management Modal -->
+    <div id="timeManagement" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('timeManagement')">&times;</span>
+            <h1>⏰ Time Management Mastery</h1>
+            
+            <div class="activity-section">
+                <h3>📊 Activity 1: Weekly Time Audit</h3>
+                <p>Track where your time actually goes for better planning.</p>
+                <div style="margin: 20px 0;">
+                    <label>How many hours do you spend on:</label>
+                    <input type="number" id="workHours" placeholder="Work/Study hours per week" min="0" max="168">
+                    <input type="number" id="sleepHours" placeholder="Sleep hours per week" min="0" max="168">
+                    <input type="number" id="socialHours" placeholder="Social/Family hours per week" min="0" max="168">
+                    <input type="number" id="screenHours" placeholder="Screen time hours per week" min="0" max="168">
+                    <button onclick="analyzeTime()" class="btn">Analyze My Time</button>
+                </div>
+                <div id="timeAnalysis"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🎯 Activity 2: Priority Matrix</h3>
+                <p>Use the Eisenhower Matrix to prioritize your tasks.</p>
+                <div style="margin: 20px 0;">
+                    <textarea id="taskInput" placeholder="List your current tasks (one per line)" rows="6"></textarea>
+                    <button onclick="prioritizeTasks()" class="btn">Categorize Tasks</button>
+                </div>
+                <div id="priorityResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Pro Tips:</strong>
+                <ul>
+                    <li>Use the 2-minute rule: If it takes less than 2 minutes, do it now</li>
+                    <li>Time-block your calendar for deep work</li>
+                    <li>Set specific goals, not just "be productive"</li>
+                    <li>Learn to say no to protect your time</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Communication Skills Modal -->
+    <div id="communication" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('communication')">&times;</span>
+            <h1>💬 Communication Skills</h1>
+            
+            <div class="activity-section">
+                <h3>🎭 Activity 1: Active Listening Practice</h3>
+                <p>Test your understanding of active listening principles.</p>
+                <div style="margin: 20px 0;">
+                    <p><strong>Scenario:</strong> Your friend says: "I'm so stressed about this project. My boss keeps changing requirements and I don't know what they actually want."</p>
+                    <p>Which response demonstrates active listening?</p>
+                    <select id="listeningChoice">
+                        <option value="">Choose a response...</option>
+                        <option value="a">A: "You should talk to your boss about it."</option>
+                        <option value="b">B: "It sounds like you're feeling frustrated by the unclear expectations. Can you tell me more about what's been changing?"</option>
+                        <option value="c">C: "That happened to me once too..."</option>
+                        <option value="d">D: "At least you have a job."</option>
+                    </select>
+                    <button onclick="checkListening()" class="btn">Check Answer</button>
+                </div>
+                <div id="listeningResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>✍️ Activity 2: Clear Communication Practice</h3>
+                <p>Rewrite this unclear message to be more effective:</p>
+                <div class="tip-box">
+                    <p><em>"Hey, so like, I was thinking maybe we could possibly do something about the thing we talked about? Let me know if you have time maybe."</em></p>
+                </div>
+                <textarea id="rewriteInput" placeholder="Rewrite this message clearly..." rows="4"></textarea>
+                <button onclick="analyzeRewrite()" class="btn">Get Feedback</button>
+                <div id="rewriteResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Communication Principles:</strong>
+                <ul>
+                    <li>Be clear and specific</li>
+                    <li>Listen more than you speak</li>
+                    <li>Pay attention to non-verbal cues</li>
+                    <li>Ask clarifying questions</li>
+                    <li>Adapt your style to your audience</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Critical Thinking Modal -->
+    <div id="criticalThinking" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('criticalThinking')">&times;</span>
+            <h1>🧠 Critical Thinking</h1>
+            
+            <div class="activity-section">
+                <h3>🔍 Activity 1: Identify the Logical Fallacy</h3>
+                <p>Can you spot the faulty reasoning?</p>
+                <div style="margin: 20px 0;">
+                    <p><strong>Statement:</strong> "Everyone I know loves this restaurant, so it must be the best in the city."</p>
+                    <select id="fallacyChoice">
+                        <option value="">Choose the fallacy...</option>
+                        <option value="a">Hasty Generalization</option>
+                        <option value="b">Ad Hominem</option>
+                        <option value="c">False Dilemma</option>
+                        <option value="d">Slippery Slope</option>
+                    </select>
+                    <button onclick="checkFallacy()" class="btn">Check Answer</button>
+                </div>
+                <div id="fallacyResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>📰 Activity 2: Source Evaluation</h3>
+                <p>Practice evaluating information sources.</p>
+                <div style="margin: 20px 0;">
+                    <p>Rate these factors when evaluating a source:</p>
+                    <div style="margin: 15px 0;">
+                        <label>Author Credentials: <span id="credValue">3</span>/5</label>
+                        <input type="range" min="1" max="5" value="3" id="credSlider" oninput="updateValue('cred')" style="width: 100%;">
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>Publication Date: <span id="dateValue">3</span>/5</label>
+                        <input type="range" min="1" max="5" value="3" id="dateSlider" oninput="updateValue('date')" style="width: 100%;">
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>Source Bias: <span id="biasValue">3</span>/5</label>
+                        <input type="range" min="1" max="5" value="3" id="biasSlider" oninput="updateValue('bias')" style="width: 100%;">
+                    </div>
+                    <button onclick="evaluateSource()" class="btn">Evaluate Source</button>
+                </div>
+                <div id="sourceResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Critical Thinking Framework:</strong>
+                <ul>
+                    <li>Question assumptions</li>
+                    <li>Seek evidence</li>
+                    <li>Consider alternative viewpoints</li>
+                    <li>Recognize bias (including your own)</li>
+                    <li>Draw logical conclusions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cooking Basics Modal -->
+    <div id="cooking" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('cooking')">&times;</span>
+            <h1>🍳 Cooking Basics</h1>
+            
+            <div class="activity-section">
+                <h3>🔪 Lesson 1: Essential Techniques</h3>
+                <p>Master these fundamental cooking methods:</p>
+                <div style="margin: 20px 0;">
+                    <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                        <strong>Sautéing:</strong> Quick cooking over high heat with a small amount of fat
+                        <br><em>Best for: Vegetables, thin cuts of meat</em>
+                    </div>
+                    <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                        <strong>Roasting:</strong> Dry heat in oven, usually 375-450°F
+                        <br><em>Best for: Root vegetables, whole chickens, large cuts</em>
+                    </div>
+                    <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                        <strong>Braising:</strong> Slow cooking in liquid at low temp
+                        <br><em>Best for: Tough cuts of meat, stews</em>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-section">
+                <h3>📝 Activity: Build Your Meal Plan</h3>
+                <p>Create a simple weekly meal rotation:</p>
+                <div style="margin: 20px 0;">
+                    <input type="text" id="meal1" placeholder="Easy meal #1 (e.g., Pasta with marinara)">
+                    <input type="text" id="meal2" placeholder="Easy meal #2 (e.g., Stir-fry)">
+                    <input type="text" id="meal3" placeholder="Easy meal #3 (e.g., Tacos)">
+                    <input type="text" id="meal4" placeholder="Easy meal #4 (e.g., Roasted chicken)">
+                    <input type="text" id="meal5" placeholder="Easy meal #5 (e.g., Sheet pan dinner)">
+                    <button onclick="generateGroceryList()" class="btn">Generate Shopping List</button>
+                </div>
+                <div id="groceryResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Cooking Tips:</strong>
+                <ul>
+                    <li>Mise en place: Prep everything before you start cooking</li>
+                    <li>Salt as you go, not just at the end</li>
+                    <li>Let meat rest after cooking</li>
+                    <li>Taste and adjust seasonings</li>
+                    <li>High heat for browning, low heat for tender</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Literacy Modal -->
+    <div id="digitalLiteracy" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('digitalLiteracy')">&times;</span>
+            <h1>💻 Digital Literacy</h1>
+            
+            <div class="activity-section">
+                <h3>🔒 Activity 1: Password Security Check</h3>
+                <p>Test a password's strength (we won't store it!):</p>
+                <div style="margin: 20px 0;">
+                    <input type="text" id="passwordTest" placeholder="Enter a test password">
+                    <button onclick="checkPasswordStrength()" class="btn">Check Strength</button>
+                </div>
+                <div id="passwordResult"></div>
+                <div class="tip-box" style="margin-top: 15px;">
+                    <strong>Strong Password Rules:</strong>
+                    <ul>
+                        <li>At least 12 characters</li>
+                        <li>Mix of upper/lowercase, numbers, symbols</li>
+                        <li>No dictionary words or personal info</li>
+                        <li>Unique for each account</li>
+                        <li>Use a password manager</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🎣 Activity 2: Spot the Phishing Email</h3>
+                <p>Identify red flags in this email:</p>
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                    <p><strong>From:</strong> security@paypaI-verify.com</p>
+                    <p><strong>Subject:</strong> URGENT: Your account will be closed!</p>
+                    <p>Dear Valued Customer,</p>
+                    <p>We have detected unusual activity on your account. Click here immediately to verify your identity or your account will be permanently suspended within 24 hours!</p>
+                    <p><a href="#">VERIFY NOW</a></p>
+                </div>
+                <p>How many red flags can you spot?</p>
+                <input type="number" id="phishingCount" placeholder="Number of red flags" min="0" max="10">
+                <button onclick="checkPhishing()" class="btn">Check Answer</button>
+                <div id="phishingResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Digital Safety Rules:</strong>
+                <ul>
+                    <li>Think before you click</li>
+                    <li>Verify sender addresses carefully</li>
+                    <li>Enable 2-factor authentication</li>
+                    <li>Keep software updated</li>
+                    <li>Back up important data</li>
+                    <li>Use HTTPS websites</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Self-Care Modal -->
+    <div id="selfCare" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('selfCare')">&times;</span>
+            <h1>🧘 Self-Care Essentials</h1>
+            
+            <div class="activity-section">
+                <h3>😴 Activity 1: Sleep Hygiene Assessment</h3>
+                <p>How many of these do you practice regularly?</p>
+                <div style="margin: 20px 0;">
+                    <label><input type="checkbox" id="sleep1"> Consistent sleep schedule</label><br>
+                    <label><input type="checkbox" id="sleep2"> No screens 1 hour before bed</label><br>
+                    <label><input type="checkbox" id="sleep3"> Cool, dark bedroom</label><br>
+                    <label><input type="checkbox" id="sleep4"> No caffeine after 2 PM</label><br>
+                    <label><input type="checkbox" id="sleep5"> Regular exercise</label><br>
+                    <label><input type="checkbox" id="sleep6"> Relaxation routine</label><br>
+                    <button onclick="assessSleep()" class="btn" style="margin-top: 15px;">Assess My Sleep Habits</button>
+                </div>
+                <div id="sleepResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🌟 Activity 2: Build Your Self-Care Routine</h3>
+                <p>Create a personalized daily routine:</p>
+                <div style="margin: 20px 0;">
+                    <select id="morningActivity">
+                        <option value="">Morning activity...</option>
+                        <option value="meditation">5-min meditation</option>
+                        <option value="exercise">Morning exercise</option>
+                        <option value="journal">Journaling</option>
+                        <option value="stretch">Stretching routine</option>
+                    </select>
+                    <select id="afternoonActivity">
+                        <option value="">Afternoon break...</option>
+                        <option value="walk">Short walk</option>
+                        <option value="breathe">Breathing exercises</option>
+                        <option value="snack">Healthy snack</option>
+                        <option value="music">Listen to music</option>
+                    </select>
+                    <select id="eveningActivity">
+                        <option value="">Evening wind-down...</option>
+                        <option value="read">Reading</option>
+                        <option value="bath">Relaxing bath</option>
+                        <option value="tea">Herbal tea ritual</option>
+                        <option value="gratitude">Gratitude practice</option>
+                    </select>
+                    <button onclick="createSelfCareRoutine()" class="btn">Create My Routine</button>
+                </div>
+                <div id="routineResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Self-Care Isn't Selfish:</strong>
+                <ul>
+                    <li>You can't pour from an empty cup</li>
+                    <li>Self-care prevents burnout</li>
+                    <li>Small daily actions > occasional big gestures</li>
+                    <li>Physical and mental health are connected</li>
+                    <li>Set boundaries to protect your energy</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Literacy Modal -->
+    <div id="financial" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('financial')">&times;</span>
+            <h1>💰 Financial Literacy</h1>
+            
+            <div class="activity-section">
+                <h3>📊 Activity 1: Budget Calculator</h3>
+                <p>Use the 50/30/20 rule to plan your budget:</p>
+                <div style="margin: 20px 0;">
+                    <label>Monthly Take-Home Income:</label>
+                    <input type="number" id="income" placeholder="$0" min="0">
+                    <button onclick="calculateBudget()" class="btn">Calculate Budget</button>
+                </div>
+                <div id="budgetResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>💵 Activity 2: Emergency Fund Goal</h3>
+                <p>Calculate your emergency fund target:</p>
+                <div style="margin: 20px 0;">
+                    <label>Monthly Expenses:</label>
+                    <input type="number" id="expenses" placeholder="$0" min="0">
+                    <label>Months of Coverage (3-6 recommended):</label>
+                    <input type="number" id="months" value="6" min="1" max="12">
+                    <button onclick="calculateEmergencyFund()" class="btn">Calculate Goal</button>
+                </div>
+                <div id="emergencyResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Financial Fundamentals:</strong>
+                <ul>
+                    <li>Track every dollar you spend</li>
+                    <li>Pay yourself first (automate savings)</li>
+                    <li>Avoid lifestyle inflation</li>
+                    <li>Understand compound interest</li>
+                    <li>Build credit responsibly</li>
+                    <li>Invest in your future</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization Skills Modal -->
+    <div id="organization" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('organization')">&times;</span>
+            <h1>📋 Organization Skills</h1>
+            
+            <div class="activity-section">
+                <h3>🗂️ Activity 1: Declutter Challenge</h3>
+                <p>Use the "Four Box Method" to organize any space:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px;">
+                        <strong>✅ Keep</strong>
+                        <p>Items you use regularly and need</p>
+                    </div>
+                    <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                        <strong>📦 Store</strong>
+                        <p>Seasonal or occasional-use items</p>
+                    </div>
+                    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px;">
+                        <strong>💝 Donate</strong>
+                        <p>Good condition but no longer needed</p>
+                    </div>
+                    <div style="background: #ffebee; padding: 20px; border-radius: 8px;">
+                        <strong>🗑️ Trash</strong>
+                        <p>Broken, expired, or unusable</p>
+                    </div>
+                </div>
+                <p>Pick a space to organize:</p>
+                <select id="spaceChoice">
+                    <option value="">Choose a space...</option>
+                    <option value="closet">Closet</option>
+                    <option value="desk">Desk/Workspace</option>
+                    <option value="kitchen">Kitchen</option>
+                    <option value="digital">Digital Files</option>
+                </select>
+                <button onclick="getOrganizationTips()" class="btn">Get Specific Tips</button>
+                <div id="organizationResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>📅 Activity 2: Weekly Planning Template</h3>
+                <p>Create your weekly organization system:</p>
+                <div style="margin: 20px 0;">
+                    <label>Sunday Planning Ritual:</label>
+                    <textarea id="sundayPlan" placeholder="What will you review/plan each Sunday?" rows="2"></textarea>
+                    <label>Daily Review Time:</label>
+                    <select id="reviewTime">
+                        <option value="morning">Morning (plan the day)</option>
+                        <option value="evening">Evening (review & prep tomorrow)</option>
+                        <option value="both">Both</option>
+                    </select>
+                    <button onclick="createWeeklySystem()" class="btn">Create My System</button>
+                </div>
+                <div id="weeklyResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Organization Principles:</strong>
+                <ul>
+                    <li>Everything needs a home</li>
+                    <li>Use it or lose it (if unused for 6+ months)</li>
+                    <li>One in, one out rule</li>
+                    <li>Group similar items together</li>
+                    <li>Label everything</li>
+                    <li>5-minute daily reset</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Problem Solving Modal -->
+    <div id="problemSolving" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('problemSolving')">&times;</span>
+            <h1>🔍 Problem Solving</h1>
+            
+            <div class="activity-section">
+                <h3>🎯 The 5-Step Problem Solving Method</h3>
+                <p>Work through any problem systematically:</p>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Step 1: Define the Problem Clearly</strong>
+                    <textarea id="problemDef" placeholder="What exactly is the problem? Be specific." rows="3" style="width: 100%; margin: 10px 0;"></textarea>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Step 2: Brainstorm Solutions</strong>
+                    <textarea id="solutions" placeholder="List all possible solutions (don't judge yet)" rows="4" style="width: 100%; margin: 10px 0;"></textarea>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Step 3: Evaluate Options</strong>
+                    <p>Rate each solution on:</p>
+                    <ul>
+                        <li>Feasibility (Can I actually do this?)</li>
+                        <li>Impact (Will it solve the problem?)</li>
+                        <li>Resources (Time, money, effort needed)</li>
+                    </ul>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Step 4: Choose & Act</strong>
+                    <textarea id="chosenSolution" placeholder="Which solution will you try first?" rows="2" style="width: 100%; margin: 10px 0;"></textarea>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                    <strong>Step 5: Review Results</strong>
+                    <p>After trying the solution, ask:</p>
+                    <ul>
+                        <li>Did it work?</li>
+                        <li>What would I do differently?</li>
+                        <li>What did I learn?</li>
+                    </ul>
+                </div>
+
+                <button onclick="generateProblemSolvingPlan()" class="btn">Create Action Plan</button>
+                <div id="problemPlanResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Problem Solving Tips:</strong>
+                <ul>
+                    <li>Break big problems into smaller parts</li>
+                    <li>Look for root causes, not just symptoms</li>
+                    <li>Consider asking for help or advice</li>
+                    <li>Sometimes "do nothing" is a valid option</li>
+                    <li>Learn from failures - they're data points</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conflict Resolution Modal -->
+    <div id="conflictResolution" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('conflictResolution')">&times;</span>
+            <h1>🤝 Conflict Resolution</h1>
+            
+            <div class="activity-section">
+                <h3>💬 Activity 1: "I" Statements Practice</h3>
+                <p>Transform accusations into constructive communication:</p>
+                <div style="margin: 20px 0;">
+                    <div class="tip-box">
+                        <strong>Poor:</strong> "You never listen to me!"<br>
+                        <strong>Better:</strong> "I feel unheard when I'm interrupted during conversations."
+                    </div>
+                    <p>Try it yourself:</p>
+                    <textarea id="youStatement" placeholder='Enter a "You..." statement' rows="2"></textarea>
+                    <button onclick="convertToIStatement()" class="btn">Convert to "I" Statement</button>
+                    <div id="iStatementResult"></div>
+                </div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🎭 Activity 2: Conflict Style Assessment</h3>
+                <p>How do you typically handle conflict?</p>
+                <div style="margin: 20px 0;">
+                    <p>When facing disagreement, I usually:</p>
+                    <select id="conflictStyle">
+                        <option value="">Choose your typical response...</option>
+                        <option value="avoid">Avoid the conversation entirely</option>
+                        <option value="accommodate">Give in to keep the peace</option>
+                        <option value="compete">Push hard for my way</option>
+                        <option value="compromise">Meet halfway quickly</option>
+                        <option value="collaborate">Work to understand both needs fully</option>
+                    </select>
+                    <button onclick="analyzeConflictStyle()" class="btn">Analyze Style</button>
+                </div>
+                <div id="styleResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🔧 The 4-Step Resolution Process</h3>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <strong>1. Cool Down</strong> - Take space if emotions are high
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <strong>2. Listen First</strong> - Understand before being understood
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <strong>3. Find Common Ground</strong> - What do we both want?
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <strong>4. Create Solutions Together</strong> - Collaborate on the path forward
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Conflict Resolution Tips:</strong>
+                <ul>
+                    <li>Focus on the issue, not the person</li>
+                    <li>Stay curious, not defensive</li>
+                    <li>Validate feelings even if you disagree</li>
+                    <li>Take breaks if needed</li>
+                    <li>Aim for win-win solutions</li>
+                    <li>Know when to agree to disagree</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- First Aid Modal -->
+    <div id="firstAid" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('firstAid')">&times;</span>
+            <h1>🏥 First Aid & Safety</h1>
+            
+            <div class="activity-section">
+                <h3>🚨 Emergency Response Priorities</h3>
+                <p>Remember: <strong>D.R.A.B.C.</strong></p>
+                <div style="margin: 20px 0;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>D - Danger:</strong> Check for hazards to yourself and others
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>R - Response:</strong> Check if person is conscious
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>A - Airway:</strong> Ensure airway is clear
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>B - Breathing:</strong> Check for breathing
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>C - Circulation:</strong> Check for pulse, control bleeding
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🩹 Common Emergency Quiz</h3>
+                <p>Test your first aid knowledge:</p>
+                <div style="margin: 20px 0;">
+                    <p><strong>Scenario:</strong> Someone is choking and cannot cough or speak. What do you do?</p>
+                    <select id="chokingResponse">
+                        <option value="">Choose the correct response...</option>
+                        <option value="a">Slap their back forcefully</option>
+                        <option value="b">Heimlich maneuver (abdominal thrusts)</option>
+                        <option value="c">Give them water</option>
+                        <option value="d">Lay them down</option>
+                    </select>
+                    <button onclick="checkFirstAid()" class="btn">Check Answer</button>
+                </div>
+                <div id="firstAidResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>📋 Your Home Safety Checklist</h3>
+                <p>Do you have these essentials?</p>
+                <div style="margin: 20px 0;">
+                    <label><input type="checkbox"> First aid kit</label><br>
+                    <label><input type="checkbox"> Fire extinguisher</label><br>
+                    <label><input type="checkbox"> Smoke detectors (working batteries)</label><br>
+                    <label><input type="checkbox"> Carbon monoxide detector</label><br>
+                    <label><input type="checkbox"> Emergency contacts list</label><br>
+                    <label><input type="checkbox"> Flashlight & batteries</label><br>
+                    <label><input type="checkbox"> Emergency water/food supply</label><br>
+                </div>
+            </div>
+
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f44336;">
+                <strong>⚠️ IMPORTANT:</strong> This is educational info only. In real emergencies:
+                <ul>
+                    <li>Call 911 (or local emergency number) first</li>
+                    <li>Get professional first aid training</li>
+                    <li>Never perform procedures you're not trained in</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emotional Intelligence Modal -->
+    <div id="emotional" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('emotional')">&times;</span>
+            <h1>❤️ Emotional Intelligence</h1>
+            
+            <div class="activity-section">
+                <h3>🎭 Activity 1: Name Your Emotions</h3>
+                <p>Build emotional vocabulary beyond "good" and "bad":</p>
+                <div style="margin: 20px 0;">
+                    <p>Current situation:</p>
+                    <textarea id="emotionSituation" placeholder="Briefly describe what's happening..." rows="2"></textarea>
+                    <p>I feel:</p>
+                    <select id="emotionChoice">
+                        <option value="">Choose the most accurate emotion...</option>
+                        <optgroup label="Anger Family">
+                            <option value="frustrated">Frustrated</option>
+                            <option value="irritated">Irritated</option>
+                            <option value="resentful">Resentful</option>
+                            <option value="furious">Furious</option>
+                        </optgroup>
+                        <optgroup label="Sadness Family">
+                            <option value="disappointed">Disappointed</option>
+                            <option value="lonely">Lonely</option>
+                            <option value="discouraged">Discouraged</option>
+                            <option value="grieving">Grieving</option>
+                        </optgroup>
+                        <optgroup label="Fear Family">
+                            <option value="anxious">Anxious</option>
+                            <option value="worried">Worried</option>
+                            <option value="overwhelmed">Overwhelmed</option>
+                            <option value="terrified">Terrified</option>
+                        </optgroup>
+                        <optgroup label="Joy Family">
+                            <option value="content">Content</option>
+                            <option value="excited">Excited</option>
+                            <option value="grateful">Grateful</option>
+                            <option value="peaceful">Peaceful</option>
+                        </optgroup>
+                    </select>
+                    <button onclick="analyzeEmotion()" class="btn">Understand This Emotion</button>
+                </div>
+                <div id="emotionResult"></div>
+            </div>
+
+            <div class="activity-section">
+                <h3>🧘 Activity 2: Emotion Regulation Toolkit</h3>
+                <p>Build your personal coping strategies:</p>
+                <div style="margin: 20px 0;">
+                    <p>When I feel overwhelmed, I can:</p>
+                    <label><input type="checkbox" id="cope1"> Take 5 deep breaths</label><br>
+                    <label><input type="checkbox" id="cope2"> Go for a walk</label><br>
+                    <label><input type="checkbox" id="cope3"> Call a friend</label><br>
+                    <label><input type="checkbox" id="cope4"> Journal my thoughts</label><br>
+                    <label><input type="checkbox" id="cope5"> Use the 5-4-3-2-1 grounding technique</label><br>
+                    <label><input type="checkbox" id="cope6"> Listen to calming music</label><br>
+                    <textarea id="customCoping" placeholder="Add your own coping strategy..." rows="2" style="margin-top: 10px;"></textarea>
+                    <button onclick="createCopingPlan()" class="btn">Save My Toolkit</button>
+                </div>
+                <div id="copingResult"></div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 The 4 Pillars of Emotional Intelligence:</strong>
+                <ul>
+                    <li><strong>Self-Awareness:</strong> Recognizing your emotions</li>
+                    <li><strong>Self-Management:</strong> Regulating your responses</li>
+                    <li><strong>Social Awareness:</strong> Understanding others' emotions</li>
+                    <li><strong>Relationship Management:</strong> Using emotional info effectively</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Time Management Functions
+        function analyzeTime() {
+            const work = parseInt(document.getElementById('workHours').value) || 0;
+            const sleep = parseInt(document.getElementById('sleepHours').value) || 0;
+            const social = parseInt(document.getElementById('socialHours').value) || 0;
+            const screen = parseInt(document.getElementById('screenHours').value) || 0;
+            
+            const total = work + sleep + social + screen;
+            const unaccounted = 168 - total;
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Your Weekly Time Breakdown:</h4>';
+            html += `<p><strong>Work/Study:</strong> ${work} hours (${Math.round(work/168*100)}%)</p>`;
+            html += `<p><strong>Sleep:</strong> ${sleep} hours (${Math.round(sleep/168*100)}%)</p>`;
+            html += `<p><strong>Social/Family:</strong> ${social} hours (${Math.round(social/168*100)}%)</p>`;
+            html += `<p><strong>Screen Time:</strong> ${screen} hours (${Math.round(screen/168*100)}%)</p>`;
+            html += `<p><strong>Unaccounted:</strong> ${unaccounted} hours (${Math.round(unaccounted/168*100)}%)</p>`;
+            
+            if (sleep < 49) {
+                html += '<div class="tip-box" style="margin-top: 15px;"><strong>⚠️ Sleep Alert:</strong> You might not be getting enough sleep. Aim for 7-9 hours per night (49-63 hours/week).</div>';
+            }
+            
+            if (screen > 30) {
+                html += '<div class="tip-box" style="margin-top: 15px;"><strong>💡 Tip:</strong> High screen time detected. Consider redirecting some of this time to other activities.</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('timeAnalysis').innerHTML = html;
+        }
+
+        function prioritizeTasks() {
+            const tasks = document.getElementById('taskInput').value.split('\n').filter(t => t.trim());
+            
+            if (tasks.length === 0) {
+                document.getElementById('priorityResult').innerHTML = '<div class="result-box">Please enter at least one task.</div>';
+                return;
+            }
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Eisenhower Matrix:</h4>';
+            html += '<p>Sort your tasks into these categories:</p>';
+            html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">';
+            html += '<div style="background: #ffebee; padding: 15px; border-radius: 8px;"><strong>🔥 Urgent & Important</strong><p style="font-size: 0.9em;">Do these first!</p></div>';
+            html += '<div style="background: #e8f5e9; padding: 15px; border-radius: 8px;"><strong>📅 Important, Not Urgent</strong><p style="font-size: 0.9em;">Schedule these</p></div>';
+            html += '<div style="background: #fff3e0; padding: 15px; border-radius: 8px;"><strong>📞 Urgent, Not Important</strong><p style="font-size: 0.9em;">Delegate if possible</p></div>';
+            html += '<div style="background: #f3e5f5; padding: 15px; border-radius: 8px;"><strong>❌ Neither</strong><p style="font-size: 0.9em;">Eliminate these</p></div>';
+            html += '</div></div>';
+            
+            document.getElementById('priorityResult').innerHTML = html;
+        }
+
+        // Communication Functions
+        function checkListening() {
+            const choice = document.getElementById('listeningChoice').value;
+            let html = '<div class="result-box">';
+            
+            if (choice === 'b') {
+                html += '<div class="success-box"><strong>✅ Correct!</strong> This response demonstrates active listening by:<ul><li>Reflecting the emotion (frustrated)</li><li>Showing understanding</li><li>Asking an open-ended question</li><li>Not jumping to solutions immediately</li></ul></div>';
+            } else if (choice === 'a') {
+                html += '<div class="tip-box"><strong>Not quite.</strong> While giving advice can be helpful, jumping straight to solutions before fully understanding shows you\'re not actively listening to their experience.</div>';
+            } else if (choice === 'c' || choice === 'd') {
+                html += '<div class="tip-box"><strong>Not quite.</strong> This response shifts focus away from the speaker. Active listening keeps attention on their experience and feelings.</div>';
+            } else {
+                html += '<div class="result-box">Please select a response.</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('listeningResult').innerHTML = html;
+        }
+
+        function analyzeRewrite() {
+            const rewrite = document.getElementById('rewriteInput').value;
+            
+            if (!rewrite.trim()) {
+                document.getElementById('rewriteResult').innerHTML = '<div class="result-box">Please rewrite the message.</div>';
+                return;
+            }
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Good Rewrite Includes:</h4>';
+            html += '<ul>';
+            html += '<li>✅ Specific request or question</li>';
+            html += '<li>✅ Clear timeline/deadline</li>';
+            html += '<li>✅ Context (why you\'re asking)</li>';
+            html += '<li>✅ Confident tone (not wishy-washy)</li>';
+            html += '</ul>';
+            html += '<p style="margin-top: 15px;"><strong>Example:</strong> "Hi [Name], could we schedule a 30-minute meeting this week to discuss the X project? I\'d like to finalize the timeline and assign responsibilities. Would Thursday at 2pm work for you?"</p>';
+            html += '</div>';
+            
+            document.getElementById('rewriteResult').innerHTML = html;
+        }
+
+        // Critical Thinking Functions
+        function checkFallacy() {
+            const choice = document.getElementById('fallacyChoice').value;
+            let html = '<div class="result-box">';
+            
+            if (choice === 'a') {
+                html += '<div class="success-box"><strong>✅ Correct!</strong> This is a <strong>Hasty Generalization</strong>. The person is drawing a broad conclusion ("best in the city") from a limited sample ("everyone I know"). Your social circle isn\'t representative of the entire city\'s population.</div>';
+            } else {
+                html += '<div class="tip-box"><strong>Not quite.</strong> The correct answer is Hasty Generalization. They\'re making a sweeping claim based on insufficient evidence (only their friends\' opinions).</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('fallacyResult').innerHTML = html;
+        }
+
+        function updateValue(type) {
+            document.getElementById(type + 'Value').textContent = document.getElementById(type + 'Slider').value;
+        }
+
+        function evaluateSource() {
+            const cred = parseInt(document.getElementById('credSlider').value);
+            const date = parseInt(document.getElementById('dateSlider').value);
+            const bias = parseInt(document.getElementById('biasSlider').value);
+            const avg = Math.round((cred + date + bias) / 3);
+            
+            let html = '<div class="result-box">';
+            html += `<h4>Overall Source Quality: ${avg}/5</h4>`;
+            
+            if (avg >= 4) {
+                html += '<div class="success-box">This appears to be a high-quality, reliable source. Still verify claims with multiple sources when possible.</div>';
+            } else if (avg >= 3) {
+                html += '<div class="tip-box">This source may be acceptable but warrants additional verification. Look for corroboration from other sources.</div>';
+            } else {
+                html += '<div class="tip-box">⚠️ This source has significant concerns. Seek out more authoritative sources before accepting claims.</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('sourceResult').innerHTML = html;
+        }
+
+        // Cooking Functions
+        function generateGroceryList() {
+            const meals = [
+                document.getElementById('meal1').value,
+                document.getElementById('meal2').value,
+                document.getElementById('meal3').value,
+                document.getElementById('meal4').value,
+                document.getElementById('meal5').value
+            ].filter(m => m.trim());
+            
+            if (meals.length === 0) {
+                document.getElementById('groceryResult').innerHTML = '<div class="result-box">Please enter at least one meal.</div>';
+                return;
+            }
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Your Meal Rotation:</h4><ul>';
+            meals.forEach(meal => {
+                html += `<li>${meal}</li>`;
+            });
+            html += '</ul>';
+            html += '<p style="margin-top: 15px;"><strong>💡 Next Steps:</strong></p>';
+            html += '<ul><li>Write out ingredients for each meal</li>';
+            html += '<li>Check what you already have</li>';
+            html += '<li>Make your shopping list by category (produce, protein, pantry)</li>';
+            html += '<li>Prep ingredients on Sunday if possible</li></ul>';
+            html += '</div>';
+            
+            document.getElementById('groceryResult').innerHTML = html;
+        }
+
+        // Digital Literacy Functions
+        function checkPasswordStrength() {
+            const password = document.getElementById('passwordTest').value;
+            let strength = 0;
+            let feedback = [];
+            
+            if (password.length >= 12) {
+                strength += 2;
+            } else {
+                feedback.push('Use at least 12 characters');
+            }
+            
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+                strength += 1;
+            } else {
+                feedback.push('Mix upper and lowercase');
+            }
+            
+            if (/[0-9]/.test(password)) {
+                strength += 1;
+            } else {
+                feedback.push('Include numbers');
+            }
+            
+            if (/[^a-zA-Z0-9]/.test(password)) {
+                strength += 1;
+            } else {
+                feedback.push('Add symbols (!@#$%^&*)');
+            }
+            
+            let html = '<div class="result-box">';
+            html += '<div class="progress-bar"><div class="progress-fill" style="width: ' + (strength * 20) + '%">' + strength + '/5</div></div>';
+            
+            if (strength >= 4) {
+                html += '<div class="success-box">Strong password! ✅</div>';
+            } else if (strength >= 3) {
+                html += '<div class="tip-box">Moderate strength. Could be improved.</div>';
+            } else {
+                html += '<div class="tip-box">⚠️ Weak password. Please strengthen it.</div>';
+            }
+            
+            if (feedback.length > 0) {
+                html += '<p><strong>To improve:</strong></p><ul>';
+                feedback.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            html += '</div>';
+            document.getElementById('passwordResult').innerHTML = html;
+        }
+
+        function checkPhishing() {
+            const count = parseInt(document.getElementById('phishingCount').value) || 0;
+            const actualFlags = 6;
+            
+            let html = '<div class="result-box">';
+            html += `<p>You identified: <strong>${count}</strong> red flags</p>`;
+            html += `<p>Actual red flags: <strong>${actualFlags}</strong></p>`;
+            html += '<h4>🚩 The Red Flags:</h4><ul>';
+            html += '<li>Misspelled domain (PaypaI with capital i instead of l)</li>';
+            html += '<li>Urgent/threatening language</li>';
+            html += '<li>Generic greeting ("Dear Valued Customer")</li>';
+            html += '<li>Suspicious link (hover to check real URL)</li>';
+            html += '<li>Tight deadline pressure (24 hours)</li>';
+            html += '<li>Request to verify/login via link</li>';
+            html += '</ul>';
+            html += '<div class="success-box" style="margin-top: 15px;"><strong>✅ Remember:</strong> Legitimate companies won\'t threaten account closure via email or pressure immediate action.</div>';
+            html += '</div>';
+            
+            document.getElementById('phishingResult').innerHTML = html;
+        }
+
+        // Self-Care Functions
+        function assessSleep() {
+            let count = 0;
+            for (let i = 1; i <= 6; i++) {
+                if (document.getElementById('sleep' + i).checked) count++;
+            }
+            
+            let html = '<div class="result-box">';
+            html += '<div class="progress-bar"><div class="progress-fill" style="width: ' + (count * 16.67) + '%">' + count + '/6</div></div>';
+            
+            if (count >= 5) {
+                html += '<div class="success-box"><strong>Excellent!</strong> You\'re practicing great sleep hygiene. Keep it up! 😴</div>';
+            } else if (count >= 3) {
+                html += '<div class="tip-box"><strong>Good start!</strong> Try adding ' + (6 - count) + ' more habits to improve your sleep quality.</div>';
+            } else {
+                html += '<div class="tip-box"><strong>Room for improvement!</strong> Better sleep hygiene can significantly improve your energy and health. Start with 1-2 new habits this week.</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('sleepResult').innerHTML = html;
+        }
+
+        function createSelfCareRoutine() {
+            const morning = document.getElementById('morningActivity').value;
+            const afternoon = document.getElementById('afternoonActivity').value;
+            const evening = document.getElementById('eveningActivity').value;
+            
+            if (!morning || !afternoon || !evening) {
+                document.getElementById('routineResult').innerHTML = '<div class="result-box">Please select an activity for each time of day.</div>';
+                return;
+            }
+            
+            const activities = {
+                meditation: '5-minute meditation',
+                exercise: 'Morning exercise',
+                journal: 'Journaling',
+                stretch: 'Stretching routine',
+                walk: 'Short walk',
+                breathe: 'Breathing exercises',
+                snack: 'Healthy snack break',
+                music: 'Listen to music',
+                read: 'Reading',
+                bath: 'Relaxing bath',
+                tea: 'Herbal tea ritual',
+                gratitude: 'Gratitude practice'
+            };
+            
+            let html = '<div class="success-box">';
+            html += '<h4>Your Personal Self-Care Routine:</h4>';
+            html += `<p><strong>🌅 Morning:</strong> ${activities[morning]}</p>`;
+            html += `<p><strong>☀️ Afternoon:</strong> ${activities[afternoon]}</p>`;
+            html += `<p><strong>🌙 Evening:</strong> ${activities[evening]}</p>`;
+            html += '<p style="margin-top: 15px;"><strong>💡 Implementation Tip:</strong> Start with just one of these for a week, then add the others. Small, consistent actions beat big, sporadic efforts!</p>';
+            html += '</div>';
+            
+            document.getElementById('routineResult').innerHTML = html;
+        }
+
+        // Financial Literacy Functions
+        function calculateBudget() {
+            const income = parseFloat(document.getElementById('income').value) || 0;
+            
+            if (income <= 0) {
+                document.getElementById('budgetResult').innerHTML = '<div class="result-box">Please enter your monthly income.</div>';
+                return;
+            }
+            
+            const needs = Math.round(income * 0.50);
+            const wants = Math.round(income * 0.30);
+            const savings = Math.round(income * 0.20);
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Your 50/30/20 Budget:</h4>';
+            html += `<p><strong>💰 Total Income:</strong> $${income.toLocaleString()}</p><hr style="margin: 15px 0;">`;
+            html += `<p><strong>🏠 Needs (50%):</strong> $${needs.toLocaleString()}</p>`;
+            html += '<p style="font-size: 0.9em; color: #666; margin-left: 20px;">Rent, utilities, groceries, insurance, minimum debt payments</p>';
+            html += `<p><strong>🎉 Wants (30%):</strong> $${wants.toLocaleString()}</p>`;
+            html += '<p style="font-size: 0.9em; color: #666; margin-left: 20px;">Entertainment, dining out, hobbies, subscriptions</p>';
+            html += `<p><strong>💎 Savings (20%):</strong> $${savings.toLocaleString()}</p>`;
+            html += '<p style="font-size: 0.9em; color: #666; margin-left: 20px;">Emergency fund, retirement, investments, extra debt payments</p>';
+            html += '</div>';
+            
+            document.getElementById('budgetResult').innerHTML = html;
+        }
+
+        function calculateEmergencyFund() {
+            const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+            const months = parseInt(document.getElementById('months').value) || 6;
+            
+            if (expenses <= 0) {
+                document.getElementById('emergencyResult').innerHTML = '<div class="result-box">Please enter your monthly expenses.</div>';
+                return;
+            }
+            
+            const goal = expenses * months;
+            const monthly = Math.round(goal / 24);
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Your Emergency Fund Goal:</h4>';
+            html += `<p><strong>🎯 Target Amount:</strong> $${goal.toLocaleString()}</p>`;
+            html += `<p style="color: #666;">This covers ${months} months of expenses</p>`;
+            html += '<hr style="margin: 15px 0;">';
+            html += '<h4>Building Your Fund:</h4>';
+            html += `<p>If you save <strong>$${monthly.toLocaleString()}/month</strong>, you\'ll reach your goal in <strong>2 years</strong>.</p>`;
+            html += '<div class="tip-box" style="margin-top: 15px;"><strong>💡 Pro Tips:</strong><ul>';
+            html += '<li>Start with $1,000 mini emergency fund</li>';
+            html += '<li>Automate transfers to savings</li>';
+            html += '<li>Keep in high-yield savings account</li>';
+            html += '<li>Only use for true emergencies</li></ul></div>';
+            html += '</div>';
+            
+            document.getElementById('emergencyResult').innerHTML = html;
+        }
+
+        // Organization Functions
+        function getOrganizationTips() {
+            const space = document.getElementById('spaceChoice').value;
+            
+            const tips = {
+                closet: {
+                    title: 'Closet Organization',
+                    tips: [
+                        'Use the one-year rule: Haven\'t worn it in a year? Donate it.',
+                        'Arrange by category, then color',
+                        'Use slim hangers to save space',
+                        'Store off-season clothes elsewhere',
+                        'Keep a donation bag handy'
+                    ]
+                },
+                desk: {
+                    title: 'Desk/Workspace Organization',
+                    tips: [
+                        'Clear surface = clear mind. Only keep daily essentials on top',
+                        'Use drawer dividers for supplies',
+                        'Cable management: use clips or sleeves',
+                        'File paperwork immediately (action, file, or trash)',
+                        'End-of-day 5-minute reset ritual'
+                    ]
+                },
+                kitchen: {
+                    title: 'Kitchen Organization',
+                    tips: [
+                        'Store items where you use them (spatulas near stove)',
+                        'Use clear containers for pantry items',
+                        'Declutter expired food weekly',
+                        'Keep counters clear (appliance garage if possible)',
+                        'Group like items: baking, coffee station, etc.'
+                    ]
+                },
+                digital: {
+                    title: 'Digital File Organization',
+                    tips: [
+                        'Use consistent naming: YYYY-MM-DD-Description',
+                        'Max 3-4 folder levels deep',
+                        'Create "Archive" folder for old projects',
+                        'Delete, don\'t just accumulate',
+                        'Weekly downloads folder cleanup'
+                    ]
+                }
+            };
+            
+            if (!space || !tips[space]) {
+                document.getElementById('organizationResult').innerHTML = '<div class="result-box">Please select a space to organize.</div>';
+                return;
+            }
+            
+            const selected = tips[space];
+            let html = '<div class="result-box">';
+            html += `<h4>${selected.title}</h4><ul>`;
+            selected.tips.forEach(tip => {
+                html += `<li>${tip}</li>`;
+            });
+            html += '</ul></div>';
+            
+            document.getElementById('organizationResult').innerHTML = html;
+        }
+
+        function createWeeklySystem() {
+            const sunday = document.getElementById('sundayPlan').value;
+            const review = document.getElementById('reviewTime').value;
+            
+            if (!sunday.trim() || !review) {
+                document.getElementById('weeklyResult').innerHTML = '<div class="result-box">Please fill in both fields.</div>';
+                return;
+            }
+            
+            let html = '<div class="success-box">';
+            html += '<h4>Your Weekly Organization System:</h4>';
+            html += `<p><strong>📅 Sunday Planning:</strong> ${sunday}</p>`;
+            
+            if (review === 'morning') {
+                html += '<p><strong>🌅 Daily Morning Routine:</strong> Review today\'s priorities and schedule</p>';
+            } else if (review === 'evening') {
+                html += '<p><strong>🌙 Daily Evening Routine:</strong> Review today\'s progress and prep tomorrow</p>';
+            } else {
+                html += '<p><strong>🌅 Morning:</strong> Review today\'s plan</p>';
+                html += '<p><strong>🌙 Evening:</strong> Review progress & prep tomorrow</p>';
+            }
+            
+            html += '<p style="margin-top: 15px;"><strong>💡 Make it stick:</strong> Set phone reminders for these times until they become habit!</p>';
+            html += '</div>';
+            
+            document.getElementById('weeklyResult').innerHTML = html;
+        }
+
+        // Problem Solving Functions
+        function generateProblemSolvingPlan() {
+            const problem = document.getElementById('problemDef').value;
+            const solutions = document.getElementById('solutions').value;
+            const chosen = document.getElementById('chosenSolution').value;
+            
+            if (!problem.trim() || !solutions.trim() || !chosen.trim()) {
+                document.getElementById('problemPlanResult').innerHTML = '<div class="result-box">Please complete all steps before generating your plan.</div>';
+                return;
+            }
+            
+            let html = '<div class="success-box">';
+            html += '<h4>Your Problem-Solving Action Plan:</h4>';
+            html += `<p><strong>🎯 Problem:</strong> ${problem}</p>`;
+            html += `<p><strong>✅ Chosen Solution:</strong> ${chosen}</p>`;
+            html += '<hr style="margin: 15px 0;">';
+            html += '<h4>Next Steps:</h4>';
+            html += '<ol>';
+            html += '<li>Break this solution into 3-5 concrete action steps</li>';
+            html += '<li>Set a timeline for each step</li>';
+            html += '<li>Identify what resources/help you need</li>';
+            html += '<li>Take the first action within 24 hours</li>';
+            html += '<li>Review progress in 1 week</li>';
+            html += '</ol>';
+            html += '<p style="margin-top: 15px;"><strong>💡 Remember:</strong> If this solution doesn\'t work, you have other options from your brainstorm list!</p>';
+            html += '</div>';
+            
+            document.getElementById('problemPlanResult').innerHTML = html;
+        }
+
+        // Conflict Resolution Functions
+        function convertToIStatement() {
+            const youStatement = document.getElementById('youStatement').value;
+            
+            if (!youStatement.trim()) {
+                document.getElementById('iStatementResult').innerHTML = '<div class="result-box">Please enter a statement to convert.</div>';
+                return;
+            }
+            
+            let html = '<div class="result-box">';
+            html += '<h4>Converting to "I" Statement:</h4>';
+            html += '<p><strong>Formula:</strong> "I feel [emotion] when [situation] because [reason]."</p>';
+            html += '<div class="tip-box" style="margin-top: 15px;">';
+            html += '<p><strong>Your statement:</strong> ' + youStatement + '</p>';
+            html += '<p><strong>Example conversion:</strong> "I feel [frustrated/hurt/concerned] when [describe the specific behavior] because [explain the impact on you]."</p>';
+            html += '</div>';
+            html += '<p style="margin-top: 15px;"><strong>💡 Key difference:</strong> Focus on YOUR experience, not their wrongness.</p>';
+            html += '</div>';
+            
+            document.getElementById('iStatementResult').innerHTML = html;
+        }
+
+        function analyzeConflictStyle() {
+            const style = document.getElementById('conflictStyle').value;
+            
+            const styles = {
+                avoid: {
+                    name: 'Avoiding',
+                    description: 'You tend to sidestep conflicts hoping they\'ll resolve themselves.',
+                    pros: 'Good for trivial issues or when cooling off is needed.',
+                    cons: 'Problems fester, resentment builds, relationships suffer long-term.',
+                    grow: 'Practice addressing small issues early before they become big ones.'
+                },
+                accommodate: {
+                    name: 'Accommodating',
+                    description: 'You prioritize harmony and others\' needs over your own.',
+                    pros: 'Maintains relationships, shows flexibility and care.',
+                    cons: 'Your needs go unmet, can breed resentment, others may take advantage.',
+                    grow: 'Practice expressing your needs too. Healthy relationships require balance.'
+                },
+                compete: {
+                    name: 'Competing',
+                    description: 'You push for your preferred outcome, win/lose mindset.',
+                    pros: 'Decisive, good for emergencies or when you have critical expertise.',
+                    cons: 'Damages relationships, creates defensiveness, misses creative solutions.',
+                    grow: 'Practice curiosity about others\' perspectives. Win-win is usually possible.'
+                },
+                compromise: {
+                    name: 'Compromising',
+                    description: 'You quickly seek middle ground where both sides give something up.',
+                    pros: 'Efficient, seems fair, maintains some relationship goodwill.',
+                    cons: 'Both parties lose something, may miss better solutions through deeper dialogue.',
+                    grow: 'Sometimes push for collaboration instead of quick compromise.'
+                },
+                collaborate: {
+                    name: 'Collaborating',
+                    description: 'You work to understand all needs and create win-win solutions.',
+                    pros: 'Best long-term outcomes, strengthens relationships, creative solutions.',
+                    cons: 'Time-consuming, requires skill and willingness from both parties.',
+                    grow: 'This is the gold standard! Keep practicing and teaching others this approach.'
+                }
+            };
+            
+            if (!style || !styles[style]) {
+                document.getElementById('styleResult').innerHTML = '<div class="result-box">Please select your typical conflict response.</div>';
+                return;
+            }
+            
+            const selected = styles[style];
+            let html = '<div class="result-box">';
+            html += `<h4>Your Style: ${selected.name}</h4>`;
+            html += `<p>${selected.description}</p>`;
+            html += `<p><strong>✅ Strengths:</strong> ${selected.pros}</p>`;
+            html += `<p><strong>⚠️ Limitations:</strong> ${selected.cons}</p>`;
+            html += `<p><strong>💡 Growth Area:</strong> ${selected.grow}</p>`;
+            html += '</div>';
+            
+            document.getElementById('styleResult').innerHTML = html;
+        }
+
+        // First Aid Functions
+        function checkFirstAid() {
+            const choice = document.getElementById('chokingResponse').value;
+            let html = '<div class="result-box">';
+            
+            if (choice === 'b') {
+                html += '<div class="success-box"><strong>✅ Correct!</strong> For a conscious choking adult who cannot cough, speak, or breathe:<ul>';
+                html += '<li>Stand behind them</li>';
+                html += '<li>Make a fist above their navel</li>';
+                html += '<li>Give quick, upward thrusts</li>';
+                html += '<li>Continue until object dislodges or person becomes unconscious</li>';
+                html += '<li>Call 911 immediately</li></ul>';
+                html += '<p><strong>⚠️ Important:</strong> If unconscious, begin CPR and call 911.</p></div>';
+            } else {
+                html += '<div class="tip-box"><strong>Not quite.</strong> The correct answer is the Heimlich maneuver (abdominal thrusts). This is different from back slaps which are used first for infants or when someone CAN still cough.</div>';
+            }
+            
+            html += '<p style="margin-top: 15px;"><strong>Remember:</strong> Get proper first aid training! This is educational info only.</p>';
+            html += '</div>';
+            
+            document.getElementById('firstAidResult').innerHTML = html;
+        }
+
+        // Emotional Intelligence Functions
+        function analyzeEmotion() {
+            const situation = document.getElementById('emotionSituation').value;
+            const emotion = document.getElementById('emotionChoice').value;
+            
+            const emotions = {
+                frustrated: {
+                    family: 'Anger',
+                    description: 'You\'re blocked from a goal or feel things are moving too slowly.',
+                    need: 'You likely need progress, efficiency, or resolution.',
+                    action: 'Identify the specific obstacle. Can you remove it, work around it, or adjust your expectations?'
+                },
+                irritated: {
+                    family: 'Anger',
+                    description: 'Something minor is repeatedly bothering you.',
+                    need: 'You need the annoyance to stop or your boundaries respected.',
+                    action: 'Address it directly but calmly. Small irritations often signal unmet needs.'
+                },
+                disappointed: {
+                    family: 'Sadness',
+                    description: 'Reality didn\'t match your hopes or expectations.',
+                    need: 'You need to grieve what didn\'t happen, then adjust your plan.',
+                    action: 'Allow yourself to feel it. Then ask: what can I learn? What\'s my next move?'
+                },
+                lonely: {
+                    family: 'Sadness',
+                    description: 'You\'re craving connection and feeling isolated.',
+                    need: 'You need meaningful interaction with others.',
+                    action: 'Reach out to someone. Even a text or quick call can help. Consider joining groups.'
+                },
+                anxious: {
+                    family: 'Fear',
+                    description: 'You\'re worried about uncertain future outcomes.',
+                    need: 'You need certainty, preparation, or to feel safe.',
+                    action: 'What CAN you control? Make a plan for that. Practice grounding techniques for what you can\'t control.'
+                },
+                worried: {
+                    family: 'Fear',
+                    description: 'You\'re focused on potential problems ahead.',
+                    need: 'You need to either prepare or accept uncertainty.',
+                    action: 'Ask: Is this worry useful (leads to action) or just rumination? If useful, make a plan. If not, practice letting go.'
+                },
+                overwhelmed: {
+                    family: 'Fear',
+                    description: 'Too much is happening and you feel unable to cope.',
+                    need: 'You need simplification, space, or support.',
+                    action: 'Stop. Breathe. What ONE thing needs attention right now? Get help if needed. You don\'t have to do it all.'
+                },
+                content: {
+                    family: 'Joy',
+                    description: 'You feel peaceful satisfaction with how things are.',
+                    need: 'Savor this feeling! No action needed.',
+                    action: 'Notice what created this feeling. How can you build more of it into your life?'
+                },
+                excited: {
+                    family: 'Joy',
+                    description: 'You\'re energized about something positive coming.',
+                    need: 'Channel this energy productively.',
+                    action: 'Great! Use this motivation. Just watch for overpromising when excited.'
+                },
+                grateful: {
+                    family: 'Joy',
+                    description: 'You recognize and appreciate what you have.',
+                    need: 'Express it and let it expand.',
+                    action: 'Tell someone! Gratitude shared deepens the feeling and strengthens relationships.'
+                }
+            };
+            
+            if (!situation.trim() || !emotion || !emotions[emotion]) {
+                document.getElementById('emotionResult').innerHTML = '<div class="result-box">Please describe the situation and select an emotion.</div>';
+                return;
+            }
+            
+            const selected = emotions[emotion];
+            let html = '<div class="result-box">';
+            html += `<h4>Understanding: ${emotion.charAt(0).toUpperCase() + emotion.slice(1)}</h4>`;
+            html += `<p><strong>Emotion Family:</strong> ${selected.family}</p>`;
+            html += `<p><strong>What it means:</strong> ${selected.description}</p>`;
+            html += `<p><strong>What you need:</strong> ${selected.need}</p>`;
+            html += `<p><strong>Suggested action:</strong> ${selected.action}</p>`;
+            html += '</div>';
+            
+            document.getElementById('emotionResult').innerHTML = html;
+        }
+
+        function createCopingPlan() {
+            let strategies = [];
+            for (let i = 1; i <= 6; i++) {
+                if (document.getElementById('cope' + i).checked) {
+                    strategies.push(document.getElementById('cope' + i).nextSibling.textContent.trim());
+                }
+            }
+            
+            const custom = document.getElementById('customCoping').value.trim();
+            if (custom) strategies.push(custom);
+            
+            if (strategies.length === 0) {
+                document.getElementById('copingResult').innerHTML = '<div class="result-box">Please select at least one coping strategy.</div>';
+                return;
+            }
+            
+            let html = '<div class="success-box">';
+            html += '<h4>Your Emotion Regulation Toolkit:</h4>';
+            html += '<p>When you feel overwhelmed, choose from:</p><ul>';
+            strategies.forEach(strategy => {
+                html += `<li>${strategy}</li>`;
+            });
+            html += '</ul>';
+            html += '<p style="margin-top: 15px;"><strong>💡 Pro Tip:</strong> Save this list in your phone notes! When you\'re overwhelmed, your brain won\'t remember options. Having a list helps!</p>';
+            html += '<p><strong>The 5-4-3-2-1 Technique:</strong> Name 5 things you see, 4 you hear, 3 you can touch, 2 you smell, 1 you taste. This grounds you in the present moment.</p>';
+            html += '</div>';
+            
+            document.getElementById('copingResult').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
