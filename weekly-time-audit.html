@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Time Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --border: #e2dfd8;
+    --border-strong: #c8c4bc;
+    --text: #1a1814;
+    --text-muted: #8a857c;
+    --header-bg: #1a1814;
+    --header-text: #f7f6f2;
+    --row-alt: #faf9f6;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    padding: 28px 32px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .subtitle {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 0.12em;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 3px;
+    border: 1px solid #333;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: #666; color: #ccc; }
+  .btn.danger:hover { border-color: #c0392b; color: #e74c3c; }
+
+  .stats-bar {
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 0.06em;
+    padding: 8px 12px;
+    background: #111;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .stats-bar span { color: #fff; }
+
+  /* ── CATEGORY PICKER ── */
+  .category-picker {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .cat-btn {
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 13px 5px 9px;
+    border-radius: 100px;
+    border: 2px solid transparent;
+    background: rgba(255,255,255,0.06);
+    color: #777;
+    cursor: pointer;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .cat-btn:hover { background: rgba(255,255,255,0.1); color: #ccc; }
+  .cat-btn.active { color: #fff; }
+
+  .cat-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── GRID WRAPPER ── */
+  .grid-wrapper {
+    padding: 24px 16px 32px;
+    overflow-x: auto;
+  }
+
+  .grid-container {
+    min-width: 720px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow);
+    background: var(--surface);
+    user-select: none;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 52px repeat(7, 1fr);
+  }
+
+  .grid-header-cell {
+    background: var(--header-bg);
+    color: var(--header-text);
+    text-align: center;
+    padding: 10px 4px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .grid-header-cell.time-col { font-size: 9px; color: #555; }
+
+  .time-label {
+    background: #faf9f7;
+    border-right: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 8px 0 4px;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .slot {
+    height: 26px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    cursor: crosshair;
+    transition: filter 0.08s;
+    position: relative;
+  }
+  .slot:hover { filter: brightness(0.88); }
+  .slot.empty:hover { background: var(--hover-color, #eee) !important; }
+
+  /* 6-hour divider */
+  .divider-row .slot,
+  .divider-row .time-label {
+    border-top: 2px solid var(--border-strong);
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 16px 0;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .legend-count {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ── SUMMARY PANEL ── */
+  .summary {
+    padding: 24px 32px;
+    max-width: 680px;
+  }
+
+  .summary h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .summary-bar-row {
+    margin-bottom: 14px;
+  }
+
+  .summary-bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+  .summary-bar-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text);
+  }
+
+  .summary-bar-val { color: var(--text-muted); }
+
+  .bar-track {
+    height: 7px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  .stats-card {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--row-alt);
+    font-size: 12px;
+    line-height: 2;
+    color: var(--text-muted);
+  }
+  .stats-card strong { color: var(--text); }
+
+  .empty-msg {
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 20px 0;
+  }
+
+  /* ── VIEW TOGGLE ── */
+  .view-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 3px;
+    border: 1px solid #333;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .view-btn.active { background: #fff; color: #111; border-color: #fff; }
+  .view-btn:not(.active):hover { border-color: #555; color: #bbb; }
+
+  /* ── TOOLTIP ── */
+  .tooltip {
+    position: fixed;
+    background: var(--header-bg);
+    color: var(--header-text);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 4px 9px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.1s;
+    transform: translate(-50%, -130%);
+  }
+
+  /* ── EXPORT NOTICE ── */
+  .export-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 32px;
+    background: #f0ede8;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .export-bar strong { color: var(--text); }
+
+  @media print {
+    .header, .export-bar { position: static !important; }
+    .grid-wrapper { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="title">Weekly Time Audit</div>
+      <div class="subtitle">Select a category · click or drag to fill · track your week</div>
+    </div>
+    <div class="header-actions">
+      <div class="stats-bar" id="statsBar">0 / 168 hrs logged</div>
+      <button class="view-btn active" id="btnGrid" onclick="setView('grid')">⊞ Grid</button>
+      <button class="view-btn" id="btnSummary" onclick="setView('summary')">◎ Summary</button>
+      <button class="btn danger" onclick="clearAll()">✕ Clear</button>
+    </div>
+  </div>
+
+  <div class="category-picker" id="categoryPicker"></div>
+</div>
+
+<div class="export-bar">
+  <strong>Tip:</strong> Your data is saved automatically in your browser. Use <strong>File → Print → Save as PDF</strong> to export a filled copy.
+</div>
+
+<div id="viewGrid">
+  <div class="grid-wrapper">
+    <div class="grid-container">
+      <div class="grid" id="mainGrid"></div>
+    </div>
+  </div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div id="viewSummary" style="display:none">
+  <div class="summary">
+    <h2>◎ Weekly Breakdown</h2>
+    <div id="summaryContent"></div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const CATEGORIES = [
+  { id: "class",    label: "Class / Lecture", color: "#4F46E5" },
+  { id: "study",    label: "Studying",         color: "#0891B2" },
+  { id: "sleep",    label: "Sleep",            color: "#7C3AED" },
+  { id: "meal",     label: "Meals",            color: "#D97706" },
+  { id: "social",   label: "Social",           color: "#059669" },
+  { id: "exercise", label: "Exercise",         color: "#DC2626" },
+  { id: "work",     label: "Work / Job",       color: "#B45309" },
+  { id: "screen",   label: "Screen / Media",   color: "#6B7280" },
+  { id: "selfcare", label: "Self-care",        color: "#DB2777" },
+  { id: "other",    label: "Other",            color: "#374151" },
+];
+
+const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const TOTAL = 168;
+
+let slots = {};
+let activeCategory = "study";
+let painting = false;
+let currentView = "grid";
+
+// ── Load from localStorage ──
+try {
+  const saved = localStorage.getItem("wta-slots");
+  if (saved) slots = JSON.parse(saved);
+} catch(e) {}
+
+function save() {
+  try { localStorage.setItem("wta-slots", JSON.stringify(slots)); } catch(e) {}
+}
+
+function slotKey(day, hour) { return `${day}-${hour}`; }
+
+function hourLabel(h) {
+  if (h === 0)  return "12 AM";
+  if (h < 12)   return `${h} AM`;
+  if (h === 12) return "12 PM";
+  return `${h-12} PM`;
+}
+
+// ── Build category picker ──
+function buildPicker() {
+  const el = document.getElementById("categoryPicker");
+  el.innerHTML = "";
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (cat.id === activeCategory ? " active" : "");
+    btn.style.borderColor = cat.id === activeCategory ? cat.color : "transparent";
+    btn.style.background = cat.id === activeCategory ? cat.color + "28" : "rgba(255,255,255,0.06)";
+    btn.innerHTML = `<span class="cat-dot" style="background:${cat.color}"></span>${cat.label}`;
+    btn.onclick = () => { activeCategory = cat.id; buildPicker(); };
+    el.appendChild(btn);
+  });
+}
+
+// ── Build grid ──
+function buildGrid() {
+  const grid = document.getElementById("mainGrid");
+  grid.innerHTML = "";
+
+  // Header row
+  const timeTH = document.createElement("div");
+  timeTH.className = "grid-header-cell time-col";
+  timeTH.textContent = "—";
+  grid.appendChild(timeTH);
+
+  DAYS.forEach(day => {
+    const th = document.createElement("div");
+    th.className = "grid-header-cell";
+    th.textContent = day;
+    grid.appendChild(th);
+  });
+
+  // Hour rows
+  for (let h = 0; h < 24; h++) {
+    const isDivider = h % 6 === 0;
+
+    const tl = document.createElement("div");
+    tl.className = "time-label" + (isDivider ? " divider-row" : "");
+    tl.textContent = hourLabel(h);
+    grid.appendChild(tl);
+
+    DAYS.forEach(day => {
+      const key = slotKey(day, h);
+      const cat = slots[key] ? CATEGORIES.find(c => c.id === slots[key]) : null;
+      const activeCat = CATEGORIES.find(c => c.id === activeCategory);
+
+      const cell = document.createElement("div");
+      cell.className = "slot" + (isDivider ? " divider-row" : "") + (cat ? "" : " empty");
+      cell.dataset.day = day;
+      cell.dataset.hour = h;
+      cell.style.background = cat ? cat.color : "";
+      if (!cat) cell.style.setProperty("--hover-color", activeCat.color + "40");
+
+      cell.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        painting = true;
+        toggleSlot(day, h, cell);
+      });
+      cell.addEventListener("mouseenter", (e) => {
+        if (painting) paintSlot(day, h, cell);
+        showTooltip(e, cat ? cat.label : activeCat.label, h);
+      });
+      cell.addEventListener("mouseleave", () => hideTooltip());
+
+      grid.appendChild(cell);
+    });
+  }
+
+  document.addEventListener("mouseup", () => { painting = false; });
+}
+
+function toggleSlot(day, hour, cell) {
+  const key = slotKey(day, hour);
+  if (slots[key] === activeCategory) {
+    delete slots[key];
+    cell.style.background = "";
+    cell.classList.add("empty");
+    const activeCat = CATEGORIES.find(c => c.id === activeCategory);
+    cell.style.setProperty("--hover-color", activeCat.color + "40");
+  } else {
+    const cat = CATEGORIES.find(c => c.id === activeCategory);
+    slots[key] = activeCategory;
+    cell.style.background = cat.color;
+    cell.classList.remove("empty");
+  }
+  save();
+  updateStats();
+  if (currentView === "summary") buildSummary();
+  updateLegend();
+}
+
+function paintSlot(day, hour, cell) {
+  const key = slotKey(day, hour);
+  if (slots[key] === activeCategory) return;
+  const cat = CATEGORIES.find(c => c.id === activeCategory);
+  slots[key] = activeCategory;
+  cell.style.background = cat.color;
+  cell.classList.remove("empty");
+  save();
+  updateStats();
+  updateLegend();
+}
+
+// ── Tooltip ──
+const tooltip = document.getElementById("tooltip");
+function showTooltip(e, label, hour) {
+  tooltip.textContent = `${label}  ·  ${hourLabel(hour)}–${hourLabel((hour+1)%24)}`;
+  tooltip.style.left = e.clientX + "px";
+  tooltip.style.top = e.clientY + "px";
+  tooltip.style.opacity = "1";
+}
+function hideTooltip() { tooltip.style.opacity = "0"; }
+document.addEventListener("mousemove", (e) => {
+  tooltip.style.left = e.clientX + "px";
+  tooltip.style.top = (e.clientY - 4) + "px";
+});
+
+// ── Stats ──
+function updateStats() {
+  const logged = Object.keys(slots).length;
+  const el = document.getElementById("statsBar");
+  el.innerHTML = `<span>${logged}</span> / 168 hrs logged`;
+}
+
+// ── Legend ──
+function updateLegend() {
+  const el = document.getElementById("legend");
+  el.innerHTML = "";
+  CATEGORIES.forEach(cat => {
+    const count = Object.values(slots).filter(v => v === cat.id).length;
+    if (!count) return;
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `<span class="legend-swatch" style="background:${cat.color}"></span>${cat.label}: <span class="legend-count">${count}h</span>`;
+    el.appendChild(item);
+  });
+}
+
+// ── Summary ──
+function buildSummary() {
+  const logged = Object.keys(slots).length;
+  const el = document.getElementById("summaryContent");
+
+  const data = CATEGORIES.map(cat => ({
+    ...cat,
+    hours: Object.values(slots).filter(v => v === cat.id).length
+  })).filter(c => c.hours > 0).sort((a,b) => b.hours - a.hours);
+
+  if (!data.length) {
+    el.innerHTML = `<p class="empty-msg">No time logged yet. Switch to Grid view to start tracking.</p>`;
+    return;
+  }
+
+  let html = "";
+  data.forEach(cat => {
+    const pct = Math.round((cat.hours / TOTAL) * 100);
+    html += `
+      <div class="summary-bar-row">
+        <div class="summary-bar-header">
+          <span class="summary-bar-label">
+            <span style="width:9px;height:9px;border-radius:50%;background:${cat.color};display:inline-block"></span>
+            ${cat.label}
+          </span>
+          <span class="summary-bar-val">${cat.hours}h &nbsp;<span style="color:#bbb">(${pct}%)</span></span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${cat.color}"></div>
+        </div>
+      </div>`;
+  });
+
+  html += `
+    <div class="stats-card">
+      Total tracked: <strong>${logged} hours</strong><br>
+      Untracked: <strong>${TOTAL - logged} hours</strong><br>
+      Week complete: <strong>${Math.round((logged/TOTAL)*100)}%</strong>
+    </div>`;
+
+  el.innerHTML = html;
+}
+
+// ── View toggle ──
+function setView(v) {
+  currentView = v;
+  document.getElementById("viewGrid").style.display = v === "grid" ? "" : "none";
+  document.getElementById("viewSummary").style.display = v === "summary" ? "" : "none";
+  document.getElementById("btnGrid").classList.toggle("active", v === "grid");
+  document.getElementById("btnSummary").classList.toggle("active", v === "summary");
+  if (v === "summary") buildSummary();
+}
+
+// ── Clear ──
+function clearAll() {
+  if (!confirm("Clear all logged time? This cannot be undone.")) return;
+  slots = {};
+  save();
+  buildGrid();
+  updateStats();
+  updateLegend();
+}
+
+// ── Init ──
+buildPicker();
+buildGrid();
+updateStats();
+updateLegend();
+</script>
+</body>
+</html>
